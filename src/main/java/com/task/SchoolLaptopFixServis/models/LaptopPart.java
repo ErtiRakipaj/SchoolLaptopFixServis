@@ -1,5 +1,6 @@
 package com.task.SchoolLaptopFixServis.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -27,5 +28,5 @@ public class LaptopPart {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ticket_id")
     @JsonIgnore
-    private transient Ticket ticket;
+    private  Ticket ticket;
 }
