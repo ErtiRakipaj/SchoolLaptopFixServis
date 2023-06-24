@@ -1,6 +1,7 @@
 package com.task.SchoolLaptopFixServis.models;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.task.SchoolLaptopFixServis.enums.Status;
@@ -27,8 +28,12 @@ public class Ticket {
     @OneToOne
     @JoinColumn(name = "laptop_id")
     private Laptop laptop;
-    @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-
+    @ManyToMany(cascade ={CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "ticket_laptoppart",
+            joinColumns = @JoinColumn(name = "ticket_id"),
+            inverseJoinColumns = @JoinColumn(name = "laptoppart_id")
+    )
     private List<LaptopPart> laptopParts;
     private String description;
 

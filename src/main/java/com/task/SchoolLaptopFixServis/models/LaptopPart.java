@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Entity
 @Table(name = "laptopParts")
@@ -25,8 +26,7 @@ public class LaptopPart {
     private BigDecimal price;
     private Integer stock;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ticket_id")
+    @ManyToMany(mappedBy = "laptopParts", fetch = FetchType.LAZY)
     @JsonIgnore
-    private  Ticket ticket;
+    private List<Ticket> tickets;
 }
