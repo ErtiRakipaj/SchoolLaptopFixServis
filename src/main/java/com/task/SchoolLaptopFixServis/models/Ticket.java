@@ -36,9 +36,6 @@ public class Ticket {
     )
     private List<LaptopPart> laptopParts;
     private String description;
-
     @Enumerated(EnumType.STRING)
     private Status ticketStatus;
-
-
 }

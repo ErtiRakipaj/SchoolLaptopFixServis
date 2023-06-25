@@ -12,7 +12,7 @@ import java.util.Optional;
 public interface TicketRepository extends JpaRepository<Ticket,Long> {
 
     Optional<Ticket> findTicketByLaptop_Id(Long laptopId);
-    List<Ticket> findTicketsByLaptop_Owner(String owner);
+    List<Ticket> findTicketsByLaptop_OwnerIgnoreCase(String owner);
     Optional<Ticket> findTicketById(Long id);
     Optional<Ticket> findTicketByLaptop(Laptop laptop);
 

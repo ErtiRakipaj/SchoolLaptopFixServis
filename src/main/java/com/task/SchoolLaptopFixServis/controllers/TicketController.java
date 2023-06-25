@@ -28,6 +28,12 @@ public class TicketController {
         );
     }
 
+    @GetMapping("/{laptopOwner}")
+    public ResponseEntity<List<Ticket>> getAllTicketsForCertainLaptopOwner(@PathVariable String laptopOwner){
+        return ResponseEntity.ok(
+                ticketService.getAllTicketsForACertainLaptopOwner(laptopOwner)
+        );
+    }
 
     @PostMapping("/add")
     public ResponseEntity<Ticket> createTicket(@RequestBody CreateTicketRequest request){

@@ -33,6 +33,10 @@ public class TicketService {
         return ticketRepository.findAll();
     }
 
+    public List<Ticket> getAllTicketsForACertainLaptopOwner(String laptopOwner) {
+        return ticketRepository.findTicketsByLaptop_OwnerIgnoreCase(laptopOwner);
+    }
+
 
     public Ticket createTicket(CreateTicketRequest ticketRequest) {
         if (ticketRepository.findTicketByLaptopIdAndTicketStatus(ticketRequest.getLaptopId(), Status.OPEN).isPresent()) {
@@ -65,7 +69,6 @@ public class TicketService {
 
         ticket.setLaptopParts(laptopParts);
 
-
         return ticketRepository.save(ticket);
     }
 
@@ -82,34 +85,36 @@ public class TicketService {
         Ticket existingTicket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid ticket ID"));
 
-        // Update the ticket properties
+
         existingTicket.setDescription(updateRequest.getDescription());
         existingTicket.setTicketStatus(updateRequest.getTicketStatus());
 
-        // Update the laptopParts
+
         List<LaptopPart> laptopParts = partRepository.findAllByNameIgnoreCaseIn(updateRequest.getLaptopParts());
         if (laptopParts.size() != updateRequest.getLaptopParts().size()) {
             throw new RuntimeException("One or more parts do not exist in our inventory");
         }
 
         for (LaptopPart part : existingTicket.getLaptopParts()) {
-            part.getTickets().remove(existingTicket); // Remove the association with the current ticket
+            part.getTickets().remove(existingTicket);
         }
 
-        existingTicket.getLaptopParts().clear(); // Clear the existing laptopParts
+        existingTicket.getLaptopParts().clear();
 
         for (LaptopPart part : laptopParts) {
+
             if (part.getStock() <= 0) {
                 throw new RuntimeException("Part " + part.getName() + " is out of stock");
             }
-            part.setStock(part.getStock() - 1);
-            part.getTickets().add(existingTicket); // Associate the part with the updated ticket
-            existingTicket.getLaptopParts().add(part); // Add the part to the ticket's laptopParts
+
+
+            part.getTickets().add(existingTicket);
+
+            existingTicket.getLaptopParts().add(part);
+
         }
 
         return ticketRepository.save(existingTicket);
     }
-
-
 
 }
