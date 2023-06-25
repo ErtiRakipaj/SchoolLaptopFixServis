@@ -12,4 +12,5 @@ public interface LaptopPartRepository extends JpaRepository<LaptopPart,Long> {
     Optional<LaptopPart> findLaptopPartByNameIgnoreCase(String name);
 
     List<LaptopPart> findAllByNameIgnoreCaseIn(List<String> name);
+    void deleteLaptopPartById(Long id);
 }
