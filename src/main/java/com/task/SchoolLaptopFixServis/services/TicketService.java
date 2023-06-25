@@ -85,33 +85,27 @@ public class TicketService {
         Ticket existingTicket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid ticket ID"));
 
-
         existingTicket.setDescription(updateRequest.getDescription());
         existingTicket.setTicketStatus(updateRequest.getTicketStatus());
-
 
         List<LaptopPart> laptopParts = partRepository.findAllByNameIgnoreCaseIn(updateRequest.getLaptopParts());
         if (laptopParts.size() != updateRequest.getLaptopParts().size()) {
             throw new RuntimeException("One or more parts do not exist in our inventory");
         }
 
-        for (LaptopPart part : existingTicket.getLaptopParts()) {
-            part.getTickets().remove(existingTicket);
+        List<LaptopPart> existingParts = existingTicket.getLaptopParts();
+
+        for (LaptopPart existingPart : existingParts) {
+            laptopParts.removeIf(part -> part.getId().equals(existingPart.getId()));
         }
 
-        existingTicket.getLaptopParts().clear();
-
-        for (LaptopPart part : laptopParts) {
-
-            if (part.getStock() <= 0) {
-                throw new RuntimeException("Part " + part.getName() + " is out of stock");
+        for (LaptopPart newPart : laptopParts) {
+            if (newPart.getStock() <= 0) {
+                throw new RuntimeException("Part " + newPart.getName() + " is out of stock");
             }
-
-
-            part.getTickets().add(existingTicket);
-
-            existingTicket.getLaptopParts().add(part);
-
+            newPart.setStock(newPart.getStock() - 1);
+            newPart.getTickets().add(existingTicket);
+            existingParts.add(newPart);
         }
 
         return ticketRepository.save(existingTicket);
