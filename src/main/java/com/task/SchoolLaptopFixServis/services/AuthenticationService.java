@@ -10,6 +10,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +30,9 @@ public class AuthenticationService {
 
 
     public User registerUser(String username, String password) {
+        if (userRepository.findUserByUsername(username).isPresent()) {
+            throw new IllegalArgumentException("User already exists");
+        }
         String encodedPassword = passwordEncoder.encode(password);
         Role userRole = roleRepository.findRoleByAuthority("USER").get();
 
@@ -41,13 +45,20 @@ public class AuthenticationService {
 
     public LoginResponse loginUser(String username, String password) {
         try {
+
             Authentication auth = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(username,password)
             );
 
             String token = tokenService.generateJwt(auth);
 
-            return new LoginResponse(userRepository.findUserByUsername(username).get(), token);
+            if (token.equals("") && auth.isAuthenticated()) {
+                throw new RuntimeException("User is already authenticated");
+            }
+
+            return new LoginResponse(userRepository.findUserByUsername(username).orElseThrow(
+                    () -> new UsernameNotFoundException("user not found")
+            ), token);
 
         } catch (AuthenticationException e) {
             return new LoginResponse(null,"");

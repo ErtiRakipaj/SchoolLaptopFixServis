@@ -55,8 +55,8 @@ public class SecurityConfiguration {
                             "/laptopServisApi/tickets/update/**",
                             "/laptopServisApi/tickets/delete/**",
                             "/laptopServisApi/parts/delete/**",
-                            "/laptopServisApi/parts/update/**",
-                            "/laptopServisApi/laptops/add").hasRole("ADMIN");
+                            "/laptopServisApi/parts/update/**"
+                            ).hasRole("ADMIN");
                     auth.requestMatchers("/laptopServisApi/**").hasAnyRole("ADMIN", "USER");
                     auth.anyRequest().authenticated();
                 });
