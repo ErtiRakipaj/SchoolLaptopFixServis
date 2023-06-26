@@ -1,5 +1,6 @@
 package com.task.SchoolLaptopFixServis.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,5 +21,6 @@ public class Laptop {
     private String owner;
 
     @OneToOne(mappedBy = "laptop")
+    @JsonIgnore
     private transient Ticket ticket;
 }
